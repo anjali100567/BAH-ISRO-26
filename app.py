@@ -57,8 +57,8 @@ def highlight_needs_review(row):
 # Sidebar Navigation
 # ------------------------------------------------------------------------------
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg", width=100)
-    st.title("Exoplanet Finder")
+    st.image("logo.jpg", use_container_width=True)
+    st.title("VyomVoyage")
     st.markdown("---")
     
     nav = st.radio(
