@@ -42,6 +42,7 @@ packages = [
     "matplotlib",
     "seaborn",
     "scipy",
+    "streamlit",
 ]
 
 for pkg in packages:
