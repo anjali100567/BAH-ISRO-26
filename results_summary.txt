@@ -1,0 +1,562 @@
+=================================================================
+EXOPLANET TRANSIT CLASSIFIER — RESULTS SUMMARY
+ISRO Bharatiya Antariksh Hackathon, Problem Statement 7
+=================================================================
+
+--- DATASET ---
+Total features used (19): transit_depth, transit_duration_hrs, ingress_duration_hrs, egress_duration_hrs, ingress_egress_ratio, depth_duration_ratio, odd_even_depth_diff, secondary_eclipse_depth, snr, flat_bottom_fraction, secondary_eclipse_significance, odd_even_depth_significance, transit_symmetry_score, out_of_transit_variability, transit_count, stellar_density_proxy, depth_consistency_across_transits, koi_period, koi_prad
+Total feature rows:        229
+Training samples:          171
+Test samples:              58
+
+Class breakdown (train | test):
+  Blend                 :  46 |  15
+  Eclipsing Binary      :  41 |  14
+  Other/Noise           :  43 |  15
+  Transit               :  41 |  14
+
+--- MODEL COMPARISON ---
+   Model  Accuracy  Macro-F1  F1_Blend  F1_Eclipsing Binary  F1_Other/Noise  F1_Transit
+ XGBoost  0.586207  0.576526  0.400000             0.625000        0.571429    0.709677
+LightGBM  0.568966  0.570897  0.387097             0.709677        0.615385    0.571429
+CatBoost  0.534483  0.524101  0.357143             0.666667        0.480000    0.592593
+Ensemble  0.603448  0.597801  0.370370             0.687500        0.666667    0.666667
+
+Inter-model agreement rate on test set: 69.0%
+
+--- TEST-SET METRICS (Ensemble) ---
+Accuracy:                  0.6034
+Macro-F1:                  0.5978
+
+Per-class metrics:
+  Blend                 : P=0.417  R=0.333  F1=0.370
+  Eclipsing Binary      : P=0.611  R=0.786  F1=0.688
+  Other/Noise           : P=0.750  R=0.600  F1=0.667
+  Transit               : P=0.625  R=0.714  F1=0.667
+
+--- TOP 5 FEATURES (by XGBoost gain) ---
+  1. koi_period                                (importance=0.1510)
+  2. koi_prad                                  (importance=0.1206)
+  3. secondary_eclipse_significance      (NEW) (importance=0.0976)
+  4. transit_depth                             (importance=0.0694)
+  5. snr                                       (importance=0.0507)
+
+  LightGBM Top 5: ['koi_prad', 'koi_period', 'ingress_egress_ratio', 'depth_consistency_across_transits', 'ingress_duration_hrs']
+  CatBoost Top 5: ['koi_prad', 'koi_period', 'secondary_eclipse_depth', 'odd_even_depth_diff', 'secondary_eclipse_significance']
+
+--- OUTPUT FILES ---
+  model_comparison.csv
+  scale_comparison.csv
+  confusion_matrix.png
+  feature_importance.png
+  roc_curves.png
+  example_predictions.png
+  xgb_model.json, lgb_model.txt, cat_model.cbm
+  label_encoder.pkl
+
+-> Next step: python 03_predict_unknown.py
+=================================================================
+
+=================================================================
+FEATURE IMPORTANCE STABILITY: N=20 vs N=100
+=================================================================
+N=20  top-5 (XGBoost): ['koi_period', 'ingress_duration_hrs', 'koi_prad', 'transit_duration_hrs', 'egress_duration_hrs']
+N=100 top-5 (XGBoost): ['koi_period', 'koi_prad', 'secondary_eclipse_significance', 'transit_depth', 'snr']
+New entrants at N=100: ['secondary_eclipse_significance', 'transit_depth', 'snr']
+Interpretation: These features were likely noisy/unreliable at 80 samples
+but emerged as genuinely informative signals with 400 samples.
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.552233                 3/3        False 4.616933 0.004554          3.96
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954           Blend    0.860689                 3/3        False 0.521165 0.000488          9.60
+ 38845463           Blend    0.881794                 3/3        False 0.515789 0.000791          8.64
+140501021           Blend    0.767321                 3/3        False 0.559226 0.006193          9.60
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+
+Plots saved to: unknown_lc_plots/
+=================================================================
+
+
+=================================================================
+STEP 6 — UNKNOWN TESS TARGET PREDICTIONS (Ensemble)
+Period search: TLS (transitleastsquares)
+=================================================================
+   tic_id predicted_class  confidence models_in_agreement needs_review   period    depth  duration_hrs
+ 29857954          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+ 38845463           Blend    0.702941                 3/3        False 0.617339 0.000939      0.376179
+140501021         Transit    0.665183                 2/3         True 2.271035 0.005801      0.492393
+159862112          FAILED         NaN                 NaN          NaN      NaN      NaN           NaN
+470171739         Transit    0.453278                 2/3         True 4.618360 0.004315      4.465840
+
+Plots saved to: unknown_lc_plots/
+=================================================================

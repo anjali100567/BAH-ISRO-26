@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Project specific data files and heavy artifacts
+*.fits
+*.json
+*.pkl
+*.cbm
+*.log
+results_n20/
+unknown_lc_plots/
+
+# Keep summary CSVs/TXTs
+!download_failures.csv
+!results_summary.txt
+!scale_comparison.csv
+!model_comparison.csv
+!unknown_target_predictions.csv

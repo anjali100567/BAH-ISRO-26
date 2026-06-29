@@ -1,0 +1,2 @@
+Could not generate example plots: 'None of [RangeIndex(start=0, stop=229, step=1)] are in the [columns]'
+Please re-run after ensuring 01_data_prep.py completed successfully.
