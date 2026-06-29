@@ -20,7 +20,6 @@ venv.bak/
 *.cbm
 *.log
 results_n20/
-unknown_lc_plots/
 
 # Keep summary CSVs/TXTs
 !download_failures.csv
