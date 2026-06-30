@@ -42,6 +42,8 @@ packages = [
     "matplotlib",
     "seaborn",
     "scipy",
+    "lightgbm",
+    "catboost",
     "streamlit",
 ]
 
@@ -67,7 +69,7 @@ print("Verifying imports...")
 print("=" * 60)
 
 import_ok = True
-for mod in ["lightkurve", "astropy", "xgboost", "sklearn", "pandas", "numpy", "matplotlib", "seaborn"]:
+for mod in ["lightkurve", "astropy", "xgboost", "sklearn", "pandas", "numpy", "matplotlib", "seaborn", "lightgbm", "catboost"]:
     try:
         __import__(mod)
         print(f"  [OK] {mod}")
