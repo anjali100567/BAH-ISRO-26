@@ -62,7 +62,7 @@ FEATURE_COLS = [
     "transit_count", "stellar_density_proxy",
     "depth_consistency_across_transits",
     "koi_period",   # will store the BLS/TLS-derived period
-    "koi_prad",     # unknown — set to NaN
+    "koi_prad",     # estimated from transit depth + TIC stellar radius
 ]
 
 # ── Unknown TESS targets ───────────────────────────────────────────────────────
@@ -130,6 +130,43 @@ with open(ENCODER_PATH, "rb") as f:
 
 print(f"  Models loaded from {MODEL_PATH}, {LGB_PATH}, {CAT_PATH}")
 print(f"  Classes: {list(le.classes_)}")
+
+# ==============================================================================
+# Stellar radius lookup from TESS Input Catalog (TIC)
+# ==============================================================================
+R_SUN_TO_EARTH = 109.076  # 1 R_sun = 109.076 R_earth
+
+def get_stellar_radius_earth(tic_id):
+    """
+    Query the TESS Input Catalog for the stellar radius of a TIC target.
+    Returns radius in Earth radii. Falls back to 1.0 R_sun (109 R_earth) if unavailable.
+    """
+    try:
+        from astroquery.mast import Catalogs
+        result = Catalogs.query_criteria(catalog="TIC", ID=str(tic_id))
+        if len(result) > 0 and "rad" in result.colnames:
+            r_sun = float(result["rad"][0])
+            if np.isfinite(r_sun) and r_sun > 0:
+                r_earth = r_sun * R_SUN_TO_EARTH
+                print(f"    TIC stellar radius: {r_sun:.3f} R_sun ({r_earth:.1f} R_earth) [from TIC]")
+                return r_earth
+    except Exception as e:
+        print(f"    [WARN] TIC query failed ({e}), using solar default")
+    # Solar default: 1.0 R_sun = 109.076 R_earth
+    print(f"    TIC stellar radius: using solar default (1.0 R_sun = {R_SUN_TO_EARTH:.1f} R_earth)")
+    return R_SUN_TO_EARTH
+
+
+def estimate_koi_prad(transit_depth_fraction, stellar_radius_earth):
+    """
+    Estimate planet radius in Earth radii using the standard transit formula:
+        R_p = R_star * sqrt(delta)
+    where delta is the transit depth as a fraction of stellar flux.
+    """
+    if transit_depth_fraction <= 0 or not np.isfinite(transit_depth_fraction):
+        return np.nan
+    return stellar_radius_earth * np.sqrt(max(transit_depth_fraction, 0.0))
+
 
 # ==============================================================================
 # Period-search flag (TLS preferred, BLS fallback)
@@ -338,6 +375,7 @@ def extract_features_unknown(lc_flat, period, epoch, duration_hours):
             "stellar_density_proxy":    round(stellar_density_proxy, 6),
             "depth_consistency_across_transits": round(depth_consistency_across_transits, 6) if not np.isnan(depth_consistency_across_transits) else np.nan,
             "koi_period":               period,
+            # koi_prad is filled in by the caller after stellar radius lookup
             "koi_prad":                 np.nan,
         }
 
@@ -459,6 +497,12 @@ for tic_id in UNKNOWN_TICS:
             print(f"    [FAIL] Feature extraction returned None for TIC {tic_id}")
             results.append(result_row)
             continue
+
+        # ── Estimate koi_prad from transit depth + TIC stellar radius ─────
+        stellar_r_earth = get_stellar_radius_earth(tic_id)
+        estimated_prad  = estimate_koi_prad(feats["transit_depth"], stellar_r_earth)
+        feats["koi_prad"] = estimated_prad
+        print(f"    Estimated planet radius: {estimated_prad:.2f} R_earth (depth={feats['transit_depth']*100:.4f}%, R_star={stellar_r_earth:.1f} R_earth)")
 
         # ── Predict ───────────────────────────────────────────────────────
         # Build feature vector in exact same order as training
