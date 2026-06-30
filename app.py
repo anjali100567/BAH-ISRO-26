@@ -131,7 +131,7 @@ elif nav == "📊 Model Performance":
             st.image("roc_curves.png", use_container_width=True)
             
     with c3:
-        st.markdown("**Feature Importance (XGBoost)**")
+        st.markdown("**Feature Importance (Ensemble)**")
         if os.path.exists("feature_importance.png"):
             st.image("feature_importance.png", use_container_width=True)
 

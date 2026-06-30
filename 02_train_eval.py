@@ -259,35 +259,39 @@ plt.close()
 print("\n  Saved -> confusion_matrix.png")
 
 # ==============================================================================
-# PLOT 2: Feature Importance
+# PLOT 2: Feature Importance (Ensemble Comparison)
 # ==============================================================================
-importances = xgb_model.feature_importances_
-feat_df = pd.DataFrame({
-    "feature":    available_feats,
-    "importance": importances,
-}).sort_values("importance", ascending=True)
-
-# Also get LightGBM and CatBoost top features for agreement check
+# Get top 5 features for summary logging
+xgb_imp = pd.Series(xgb_model.feature_importances_, index=available_feats).sort_values(ascending=False).head(5).index.tolist()
 lgb_imp = pd.Series(lgb_model.feature_importances_, index=available_feats).sort_values(ascending=False).head(5).index.tolist()
 cat_imp = pd.Series(cat_model.feature_importances_, index=available_feats).sort_values(ascending=False).head(5).index.tolist()
-xgb_imp = feat_df.sort_values("importance", ascending=False)["feature"].head(5).tolist()
 
-fig, ax = plt.subplots(figsize=(8, 8))
-colors = plt.cm.viridis(np.linspace(0.2, 0.9, len(feat_df)))
-bars = ax.barh(feat_df["feature"], feat_df["importance"], color=colors, edgecolor="#30363d")
-ax.set_xlabel("XGBoost F-score (gain)", labelpad=8)
-ax.set_title("Feature Importance — XGBoost Classifier", pad=10, fontsize=14, fontweight="bold")
-ax.grid(axis="x", alpha=0.3)
+# Normalize importances so they sum to 1 for fair comparison
+xgb_imp_norm = xgb_model.feature_importances_ / xgb_model.feature_importances_.sum()
+lgb_imp_norm = lgb_model.feature_importances_ / lgb_model.feature_importances_.sum()
+cat_imp_norm = cat_model.feature_importances_ / cat_model.feature_importances_.sum()
 
-# Annotate the top feature
-top_feat = feat_df.iloc[-1]
-ax.annotate(
-    f"  <- Top: {top_feat['feature']}\n  ({top_feat['importance']:.3f})",
-    xy=(top_feat["importance"], len(feat_df) - 1),
-    xytext=(top_feat["importance"] * 0.5, len(feat_df) - 1.5),
-    color="#f0c040",
-    fontsize=9,
+feat_df = pd.DataFrame({
+    "feature": available_feats,
+    "XGBoost": xgb_imp_norm,
+    "LightGBM": lgb_imp_norm,
+    "CatBoost": cat_imp_norm
+})
+feat_df["Average"] = feat_df[["XGBoost", "LightGBM", "CatBoost"]].mean(axis=1)
+feat_df = feat_df.sort_values("Average", ascending=True)
+
+fig, ax = plt.subplots(figsize=(10, 10))
+feat_df.set_index("feature")[["XGBoost", "LightGBM", "CatBoost"]].plot(
+    kind="barh", 
+    ax=ax, 
+    color=["#1f77b4", "#ff7f0e", "#2ca02c"],
+    width=0.8
 )
+ax.set_xlabel("Normalized Feature Importance", labelpad=8)
+ax.set_title("Feature Importance — Ensemble Models", pad=10, fontsize=14, fontweight="bold")
+ax.grid(axis="x", alpha=0.3)
+ax.legend(loc="lower right")
+
 plt.tight_layout()
 plt.savefig("feature_importance.png", bbox_inches="tight")
 plt.close()
@@ -503,7 +507,7 @@ summary_lines += [
     "--- TOP 5 FEATURES (by XGBoost gain) ---",
 ]
 for rank, feat in enumerate(xgb_imp, 1):
-    imp = feat_df.set_index("feature").loc[feat, "importance"]
+    imp = feat_df.set_index("feature").loc[feat, "XGBoost"]
     is_new = "(NEW)" if feat not in [
         "transit_depth", "transit_duration_hrs", "ingress_duration_hrs", "egress_duration_hrs",
         "ingress_egress_ratio", "depth_duration_ratio", "odd_even_depth_diff", "secondary_eclipse_depth",
